@@ -1,0 +1,60 @@
+<style>
+	.popover {
+		width: 180px;
+/*		top: 5px !important;*/
+	}
+</style>
+<section>
+
+	<header class="header text-center navbar-inverse">
+	
+	  <div class="btn-group pull-left">
+	  	<button popover-placement="right-top" uib-popover-template="masterVm.filterPopover.templateUrl" popover-title="Search" type="button" class="btn btn-primary" filter-popover>
+	  		<i class="fa fa-filter" aria-hidden="true"></i>
+	  	</button>
+      </div>
+      <span style="display: inline-block; margin: 1.8rem auto; color: white">{{masterVm.items.length}} / {{masterVm.count}}</span>{{masterVm.searchText}}
+      <div class="btn-group pull-right" role="group">
+		<button type="button" class="btn btn-primary" ng-click="masterVm.createItem()">
+		  <i class="fa fa-plus"></i>
+		</button>      
+		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		  <i class="fa fa-bars" aria-hidden="true"></i>
+		</button>
+		<ul class="dropdown-menu">
+		  <li><a ui-sref="list.entity.export"><i class="fa fa-download"></i> Export</a></li>
+		  <li><a ui-sref="list.import"><i class="fa fa-upload"></i> Import</a></li>					
+		  <li><a href ng-click="masterVm.deleteAll()"><i class="fa fa-trash-o"></i> Delete All</a></li>
+		  <li role="separator" class="divider"></li>		    
+		  <li><a href ng-click="masterVm.build()">Cook me an app!</a></li>
+		</ul>
+	  </div>
+    </header>
+
+	<div class="scrollable">
+		<ul class="nav nav-pills nav-stacked" style="bottom:4rem" infinite-scroll='masterVm.next()' infinite-scroll-disabled="masterVm.busy" infinite-scroll-parent="true">
+	 		<li role="presentation" ui-sref-active="active" ng-repeat="item in masterVm.items | filter:masterVm.searchText track by item.id" ng-if="masterVm.app['expert-mode']===true || (masterVm.app['expert-mode']!==true && !item.managingRelationName)">
+	 			<a href ui-sref="list.entity({boId:item.id})"><i class="fa fa-th-large"></i> {{item.label}} <span ng-click="masterVm.deleteItem(item)" class="glyphicon glyphicon-remove pull-right tools-remove" aria-hidden="true"></span></a>
+	 		</li>
+		</ul>
+		<ul class="nav nav-pills ghost-list-item-active" ng-show="masterVm.showLoadMore">
+			<li>
+				<a href click="return false;" ng-click='masterVm.next()'>
+					<p>More</p>
+					<span>[{{masterVm.items.length}} / {{masterVm.count}}]</span>					
+				</a>
+			</li>
+		</ul>
+	</div>
+</section>
+
+<script type="text/ng-template" id="filter-popover-view">
+	<div ng-show="!masterVm.showAdvanced">
+		<input type="text" ng-model="masterVm.searchText" class="form-control"> 
+		<a href ng-click='masterVm.showAdvanced=true'>Advanced</a>
+	</div>
+	<div ng-show="masterVm.showAdvanced">
+	    <span>Comming soon!</span>
+	    <a href ng-click="masterVm.showAdvanced=false">Back to simple search</a>
+	</div>      
+</script>

@@ -1,0 +1,209 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Header Entity Service",
+        "description":"This is a RESTful web service for listing, viewing and managing entities of the type 'bo_header'"
+    },
+    "basePath":"/services",
+    "tags":[
+      {
+         "name":"header",
+         "description":"List, view and manage bo_header objects"
+      }
+    ],
+    "paths": {
+        "/js/bizon/svc/v1/header.js": {
+            "get": {
+            	"tags":[
+               		"bo_header"
+            	],
+                "description": "List 'bo_header' objects.\n",
+            	"produces":[
+	               "application/json"
+	            ],                
+                "parameters": [
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of all the records. If used, no other properties are permitted.",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "metadata",
+                        "in": "query",
+                        "description": "Metadata describing the 'bo_header' object schema. If used, no other properties are permitted.",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Identifier of the 'bo_header' object. It can be specified also as last segment in path. If both are present, the query parameter wins.",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit of the objects list",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Offset of the objects list",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort parameter",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "desc",
+                        "in": "query",
+                        "description": "Descending order",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name pattern to filter objects list",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema":{
+		                     "$ref":"#/definitions/bo_header"
+                        }
+                    }
+                }
+            },
+            "post": {
+            	"tags":[
+               		"bo_header"
+            	],
+                "description": "Creates a new 'bo_header' object.\n",
+                "consumes":[
+	               "application/json"
+	            ],
+	            "produces":[
+	               "application/json"
+	            ],
+	            "parameters":[
+	               {
+	                  "in":"body",
+	                  "name":"body",
+	                  "description":"bo_header object that needs to be added",
+	                  "required":true,
+	                  "schema":{
+	                     "$ref":"#/definitions/bo_header"
+	                  }
+	               }
+	            ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema":{
+		                     "$ref":"#/definitions/bo_header"
+                        },
+                        "headers": {
+                            "Location": {
+                                "description": "The URL of the newly cretaed object",
+                                "type": "string"
+                            }
+                        }    
+                    }
+                }
+            },
+            "put": {
+            	"tags":[
+               		"bo_header"
+            	],
+                "description": "Updates an existing 'bo_header' object.\n",
+                "consumes":[
+	               "application/json"
+	            ],
+	            "parameters":[
+	               {
+	                  "in":"body",
+	                  "name":"body",
+	                  "description":"bo_header object that needs to be updated",
+	                  "required":true,
+	                  "schema":{
+	                     "$ref":"#/definitions/bo_header"
+	                  }
+	               }
+	            ],
+                "responses": {
+                    "204": {
+                        "description": "Successful response"
+                    }
+                }
+            },
+            "delete": {
+            	"tags":[
+               		"bo_header"
+            	],
+                "description": "Deletes 'bo_header' objects.\n",
+                "parameters": [
+                    {
+                        "name": "boh_id",
+                        "in": "query",
+                        "description": "Identifier of the 'bo_header' object",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "cascaded",
+                        "in": "query",
+                        "description": "Specifies if dependenb objects should be deleted too",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        }
+    },
+    "definitions":{
+        "bo_header": {
+	        "type":"object",
+	        "properties": {
+        		"id": {
+	            	"type": "integer"
+	    		},
+        		"label": {
+	            	"type": "string"
+	    		},
+	    		"description": {
+	            	"type": "string"
+	    		},
+	    		"table": {
+	            	"type": "string"
+	    		},	    		
+                "name": {
+	            	"type": "string"
+	    		}
+	        }
+        }
+	}
+}

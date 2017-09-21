@@ -1,0 +1,88 @@
+<style>
+.page [class*='col-'] {
+	overflow-y: auto;
+    height: 100%;
+	padding-right: 15px;
+}
+
+.masonry {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 2rem 0;    
+}
+
+.brick {
+   	flex: 1 0 auto;
+    margin-right: 2rem; 
+}
+
+.brick .btn {
+    font-size: 2.5vh;
+    min-width: 0;
+    height: 100%;
+    width: 100%;
+    margin: auto 0;
+    display: flex;
+    position: relative;
+    overflow: hidden; 
+}
+
+.brick .btn:after {
+	font-family: FontAwesome;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.3;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16vh;
+    line-height: 20vh;
+    text-align: center;
+}
+
+.toolbar {
+	min-height: 10vh;
+}
+
+.toolbar-item {
+   min-width: 10vw;
+   max-width: 10vw;
+   min-height: 10vh;
+   max-height: 10vh;
+}
+
+.toolbar-item .btn {
+   font-size: 2vh;
+   display: flex;
+   flex-flow: column nowrap;
+   justify-content: space-between;   
+   color: #337ab7;
+}
+
+.toolbar-item .btn:after {
+    font-size: 7vh;
+    line-height: 10vh;
+}
+
+.toolbar-item .btn .title {
+	flex: 1 0 auto;
+	align-self: flex-start;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;  
+    font-weight: 700;	
+}
+
+.toolbar-item .btn .fa {
+	align-self: flex-end;
+    color: rgba(0,0,0, 0.3);
+    opacity: 0.3;
+    font-size: 6vh;
+}
+</style>
+
+<div class="col-xs-12 col-md-12 page">
+	<h1 class="h2" style="color:#aaa">Template Models Library</h1>
+	<div ui-view="templateLib"></div>
+</div> 

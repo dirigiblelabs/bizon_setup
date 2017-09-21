@@ -1,0 +1,101 @@
+<style>
+	label[class="has-error"] {
+		color: #a94442;
+	}
+	.rzslider .rz-pointer {
+	  background-color: #428bca;
+	  outline: 0px;
+	}
+	.rzslider .rz-pointer.rz-active:after {
+	  background-color: #fff;
+	  border:none;
+	}	
+	.rzslider .rz-bar {
+	  background: #c5c6c7;
+	}
+	.rzslider .rz-ticks .rz-tick {
+	  background: #c5c6c7;
+	}	
+</style>
+
+
+<div modal="showModal" close="builderVm.cancel()" class="modal-box">
+
+	<div class="modal-header">
+	    <h3>Recipe</h3>
+	</div>
+	
+	<div class="modal-body">
+	
+		<form class="form-horizontal" form-validation>
+		  <div class="form-group">
+		    <label for="project" class="col-sm-2 control-label" required="true">Project</label>
+		    <div class="col-sm-10">
+		      <input name="project" id="project" class="form-control" placeholder="Type Project Name" ng-model="builderVm.cfg.projectName" minlength="1" maxlength="100" required="true" pattern="[a-zA-Z0-9_]{1,100}" data-rule-alphanumeric="^\w+$">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="package" class="col-sm-2 control-label" required="true">Package</label>
+		    <div class="col-sm-10">
+		      <input name="package" id="package" class="form-control" placeholder="Type Package Name" ng-model="builderVm.cfg.packageName" minlength="1" maxlength="100" required="true" pattern="[a-zA-Z0-9_]{1,100}" data-rule-alphanumeric="^\w+$">
+		    </div>
+		  </div>
+		  <rzslider rz-slider-model="builderVm.slider.value" rz-slider-options="builderVm.slider.options"></rzslider>
+		  
+		  <div class="panel panel-default" style="margin-top:1rem" ng-if="builderVm.app['expert-mode']">
+			<div class="panel-heading">
+                <h4 class="panel-title">
+                	Templates
+	                <button style="border:0;background:transparent;outline:none;" data-toggle="collapse" data-target="#templates" class="pull-right" ng-click="builderVm.templatesOpen=!builderVm.templatesOpen"><i class="glyphicon" ng-class="{'glyphicon-chevron-down': builderVm.templatesOpen, 'glyphicon-chevron-right': !builderVm.templatesOpen}"></i></button>                
+                </h4>
+            </div>	
+        	<div id="templates" class="panel-body collapse">
+				  <div class="form-group">
+				    <label for="ds_tpl" class="col-sm-2 control-label" required="true">Data</label>
+				    <div class="col-sm-10">
+			        	<select id="ds_tpl" class="form-control" ng-model="builderVm.cfg.templates.ds" ng-options="option.label for option in builderVm.templates.ds track by option.id" ng-selected="builderVm.cfg.templates.ds.name===builderVm.cfg.templates.ds.name" required="true"></select>
+				    	<span ng-bind="builderVm.cfg.templates.ds.description" style="color:#a9a9a9"/>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="svc_tpl" class="col-sm-2 control-label" required="true">Service</label>
+				    <div class="col-sm-10">
+			        	<select id="svc_tpl" class="form-control" ng-model="builderVm.cfg.templates.svc" ng-options="option.label for option in builderVm.templates.svc track by option.id" ng-selected="builderVm.cfg.templates.svc.name===builderVm.cfg.templates.svc.name" required="true"></select>
+				    	<span ng-bind="builderVm.cfg.templates.svc.description" style="color:#a9a9a9"/>
+				    </div>
+				  </div>
+				  <div class="form-group">		    
+				    <label for="ui_tpl" class="col-sm-2 control-label" required="true">UI</label>
+				    <div class="col-sm-10">
+			        	<select id="ui_tpl" class="form-control" ng-model="builderVm.cfg.templates.ui" ng-options="option.label for option in builderVm.templates.ui track by option.id" ng-selected="builderVm.cfg.templates.ui.name===builderVm.cfg.templates.ui.name" required="true"></select>
+				    	<span ng-bind="builderVm.cfg.templates.ui.description" style="color:#a9a9a9"/>
+				    </div>    
+				  </div>	            	
+        	</div>
+		  </div> 
+		  
+		  <div class="form-group">
+	  		<label for="publish" class="col-sm-2 control-label">Publish</label>
+		    <div class="col-sm-10">
+		      	<input name="publish" id="publish" type="checkbox" class="checkbox form-control" data-on-text="Yes" data-off-text="No" ng-model="builderVm.cfg.publishAfterBuild" bootstrap-switch novalidate="true"/>
+		      	<p class="help-block">Set to 'Yes' to trigger publish after successfull app generation or 'No' otherwise</p>
+		    </div>
+		  </div>
+		  
+		  <div class="form-group">
+	  		<label for="remember" class="col-sm-2 control-label">Remember</label>
+		    <div class="col-sm-10">
+		      	<input name="remember" id="remember" type="checkbox" class="checkbox form-control" data-on-text="Yes" data-off-text="No" ng-model="builderVm.cfg.remember" bootstrap-switch novalidate="true" ng-change="builderVm.rememberSettings()"/>
+		      	<p class="help-block">Set to 'Yes' to save this configuraiton for later or 'No' otherwise</p>
+		    </div>
+		  </div>		  
+		  
+		</form>
+	</div>
+	
+	<div class="modal-footer">
+	  <button class="btn btn-success" ng-click="builderVm.build()">Cook!</button>
+	  <button class="btn" ng-click="builderVm.cancel()">Cancel</button>
+	</div>
+	
+</div>

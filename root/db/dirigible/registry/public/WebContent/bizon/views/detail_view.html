@@ -1,0 +1,192 @@
+<style>
+  legend {
+    width:inherit; /* Or auto */
+    padding:0 10px; /* To give a bit of padding on the left and right */
+    border-bottom:none;
+  }
+  button.list-group-item:active, button.list-group-item:focus {
+	background-color: transparent;
+  }
+</style>
+
+<div class="detail col-xs-8 col-md-12">
+	<header class="header navbar-inverse">
+      <div class="btn-group">
+   		<button type="submit" class="btn btn-primary" ng-click="detailsVm.startEdit()">
+		  <i class="fa fa-pencil" aria-hidden="true"></i>
+		</button>
+   		<button type="submit" class="btn btn-primary" ng-click="detailsVm.duplicateItem()">
+		  <i class="fa fa-files-o" aria-hidden="true"></i>
+		</button>
+		<button class="btn btn-danger" ng-click="detailsVm.deleteItem()">
+		  <i class="glyphicon glyphicon-remove" aria-hidden="true"></i>
+		</button>
+      </div>
+    </header>
+
+	<section class="object-header fluid-container alert-info">
+		<section>
+			<div class="object-image">
+				<i class="fa fa-th"></i>
+			</div>
+			<div class="object-title">
+				<p class="title">{{detailsVm.selectedEntity.label}}</p>
+	    		<p class="subtitle">{{detailsVm.selectedEntity.description}}</p>						
+			</div>
+		</section> 
+	</section>
+								
+	<div class="list-content">	
+
+		<ul class="nav nav-tabs">
+		  <li role="presentation" class="active"><a href ng-click="detailsVm.showProperties()" data-target="#properties" aria-controls="properties" role="tab" data-toggle="tab">Properties</a></li>
+		  <li role="presentation"><a href ng-click="detailsVm.showRelationships()" data-target="#relations" aria-controls="relations" role="tab" data-toggle="tab">Relations <i class="fa fa-chain pull-right"></i></a></li>
+		  <li role="presentation"><a href ng-click="detailsVm.showConfig()" data-target="#config" aria-controls="configuration" role="tab" data-toggle="tab">Configuration <i class="fa fa-cog pull-right"></i></a></li>		  
+		</ul>
+
+		<div class="toolbar btn-group pull-right">
+			<div class="inner-addon left-addon">
+			    <i class="glyphicon glyphicon-search"></i>	
+			    <input type="search" class="quick-search" placeholder="Search" ng-model="detailsVm.searchText"/>
+			</div>
+		</div>
+
+		<div class="tab-content">
+		
+			<div class="tab-pane fade in active" role="tabpanel" id="properties">
+				<div class="items-list">
+					<div ng-hide="detailsVm.propertyItems.length" class="nodata-text">No Properties</div>
+					<div class="list-group" ng-if="detailsVm.propertyItems.length>0">
+					  <div class="list-group-item property-item" ng-repeat="entry in detailsVm.propertyItems|filter:detailsVm.searchText|orderBy:['-isPrimaryKey','-required','name']">
+					  	<div class="prop-{{entry.isPrimaryKey || entry.managingRelationName?'id':(entry.required?'required':'optional')}}" ng-if="detailsVm.app['expert-mode'] || (!entry.isPrimaryKey && !entry.managingRelationName)">
+							<div class="list-group-item-title">
+								<span ng-class="{emphasized: (entry.required || entry.isPrimaryKey)}">{{entry.label || entry.name}}</span>
+								<i ng-if="entry.required && !entry.isPrimaryKey" class="fa fa-asterisk required" aria-hidden="true"></i>
+								<i ng-if="entry.isPrimaryKey" class="fa fa-key" aria-hidden="true"></i>
+								<span ng-if="!entry.required && !entry.isPrimaryKey" class="optional">(optional)</span>
+							</div>
+							<div class="list-group-item-text">
+								<div>
+									Data Type: <span style="color:gray">{{detailsVm.formatType(entry, detailsVm.app['expert-mode'])}}</span>
+								</div>
+								<div ng-if="detailsVm.app['expert-mode']">
+									<div>Column: <span style="color:gray" ng-bind="entry.column"></span></div>	
+									<div>Default: <span style="color:gray" ng-bind="entry.defaultValue"></span></div>									
+									<div>Order: <span style="color:gray" ng-bind="entry.order"></span></div>
+									<div ng-if="entry.managingRelation">
+										Managed by Relationship: <span style="color:gray" ng-bind="entry.managingRelation.name"></span> defined in <a ng-bind="entry.managingRelation.entityLabel" ui-sref='list.entity({"boId":entry.managingRelation.entityId})'></a> entity
+									</div>
+								</div>
+							</div>
+						</div>
+					  </div>
+					</div>
+				</div>	
+			</div>
+			
+			<div class="tab-pane fade" role="tabpanel" id="relations">
+				<div class="items-list">
+					<div class="list-group">
+					  <div class="list-group-item" ng-click="$event.stopPropagation();" style="outline: none; cursor: auto; background-color: #f5f5f5">
+						Outbound relations from <span style="font-style:italic; font-weight: bold">{{detailsVm.selectedEntity.label}}</span> to other entities <i class="fa fa-arrow-right"></i>
+					  </div>					
+					  <div class="list-group-item" ng-repeat="entry in detailsVm.outboundRelations|filter:detailsVm.searchText|orderBy:['name']" ng-click="$event.stopPropagation();" style="outline: none; cursor: auto;">
+						<div class="list-group-item-title">
+							<span class="emphasized">{{entry.label}}</span>
+						</div>
+						<div class="list-group-item-text" style="color:gray;" ng-switch on="entry.type">
+							<span ng-bind="entry.srcMultiplicity==1?'One':'Many'"/></span> <span style="font-weight:bold" ng-bind="entry.source.label"/> <span ng-bind="entry.srcMultiplicity==1?'entity':'entities'"></span>
+							<span ng-switch-when="1"> association to </span>
+							<span ng-switch-when="2"> composition of </span>
+							<span ng-switch-when="3"> aggregation of </span>
+							<span ng-bind="entry.targetMultiplicity==1?'one':'many'"/></span> <a style="font-weight:bold" ng-if="entry.target.name!==detailsVm.selectedEntity.name" ng-bind="entry.target.label" ui-sref='list.entity({"boId":entry.target.id})'></a><span style="font-weight:bold" ng-if="entry.target.name===detailsVm.selectedEntity.name" ng-bind="entry.target.label"></span> <span ng-bind="entry.targetMultiplicity==1?'entity':'entities'"></span>
+						</div>						
+						<div class="list-group-item-text" style="color:gray;" ng-switch on="entry.type" ng-if="detailsVm.app['expert-mode']">
+							<div>
+								<span ng-bind="entry.srcMultiplicity==1?'1':'M'"/></span> <span ng-bind="entry.source.table"></span><span>[{{entry.srcEntityKeyProperty.column}}]</span>
+								-
+								<span ng-bind="entry.targetMultiplicity==1?'1':'N'"/></span> <span ng-bind="entry.target.table"></span><span>[{{entry.targetEntityKeyProperty.column}}]</span>
+							</div>
+						</div>
+					  </div>
+					</div>				
+					<div ng-hide="detailsVm.outboundRelations.length>0" class="nodata-text">No Items</div>										
+				</div>	
+				<div class="items-list">
+					<div class="list-group">
+					  <div class="list-group-item" style="outline: none; cursor: auto; background-color: #f5f5f5">
+						Inbound relations to <span style="font-style:italic; font-weight: bold">{{detailsVm.selectedEntity.label}}</span> from other entities <i class="fa fa-arrow-left"></i>
+					  </div>										
+					  <div class="list-group-item" ng-repeat="entry in detailsVm.inboundRelations|filter:detailsVm.searchText|orderBy:['name']" style="outline:none;cursor:auto;">
+						<div class="list-group-item-title">
+							<span class="emphasized">{{entry.label}}</span>
+						</div>
+						<div class="list-group-item-text" style="color:gray;" ng-switch on="entry.type">
+							<span ng-bind="entry.srcMultiplicity==1?'One':'Many'"/></span> <a style="font-weight:bold" ng-if="entry.source.name!==detailsVm.selectedEntity.name" ng-bind="entry.source.label" ui-sref='list.entity({"boId":entry.source.id})'></a><span style="font-weight:bold" ng-if="entry.source.name===detailsVm.selectedEntity.name" ng-bind="entry.source.label"></span> <span ng-bind="entry.srcMultiplicity==1?'entity':'entities'"></span>
+							<span ng-switch-when="1"> association to </span>
+							<span ng-switch-when="2"> composition of </span>
+							<span ng-switch-when="3"> aggregation of </span>
+							<span ng-bind="entry.targetMultiplicity==1?'one':'many'"/></span> <span style="font-weight:bold" ng-bind="entry.target.label"></span> <span ng-bind="entry.targetMultiplicity==1?'entity':'entities'"></span>
+						</div>
+						<div class="list-group-item-text" style="color:gray;" ng-switch on="entry.type" ng-if="detailsVm.app['expert-mode']">
+							<span ng-bind="entry.srcMultiplicity==1?'1':'M'"/></span> <span ng-bind="entry.source.table"></span><span>[{{entry.srcEntityKeyProperty.column}}]</span>
+							-
+							<span ng-bind="entry.targetMultiplicity==1?'1':'N'"/></span> <span ng-bind="entry.target.table"></span><span>[{{entry.targetEntityKeyProperty.column}}]</span>
+						</div>						
+					  </div>
+					</div>
+					<div ng-hide="detailsVm.inboundRelations.length>0" class="nodata-text">No Items</div>					
+				</div>				
+			</div>			
+			
+			<div class="tab-pane fade" role="tabpanel" id="config">
+				<form class="form-horizontal">			
+					<div class="panel panel-default" style="border-left:0; border-right:0; border-radius:0">
+					  <div class="panel-heading clearfix">
+					    <h3 class="panel-title" style="display: inline-block">Data Structure</h3>
+					    <div class="pull-right">[Generation {{detailsVm.selectedEntity.dsGenEnabled?'Enabled':'Disabled'}}]</div>
+					  </div>
+					  <div class="panel-body">
+					  	<div>
+						  <div class="form-group" ng-if="detailsVm.filterConfigurationEntries(detailsVm.searchText, 'Database Table Name')">
+						    <label for="table" class="col-sm-3 control-label" required="true">Database Table Name</label>
+						    <div class="col-sm-5">
+						    	<p name="table" id="table" class="form-control-static" ng-bind="detailsVm.selectedEntity.table"></p>
+						    </div>
+						  </div>
+						</div>
+					  </div>
+					</div>
+					<div class="panel panel-default" style="border-left:0; border-right:0; border-radius:0">
+					  <div class="panel-heading">
+					    <h3 class="panel-title clearifx" style="display: inline-block">Service</h3>
+						<div class="pull-right">[Generation {{detailsVm.selectedEntity.svcGenEnabled?'Enabled':'Disabled'}}]</div>
+					  </div>
+					  <div class="panel-body">				  
+						<div class="form-group"  ng-if="detailsVm.filterConfigurationEntries(detailsVm.searchText, 'Service Name')">
+						  <label for="service" class="col-sm-3 control-label" required="true">Service Name</label>
+						  <div class="col-sm-5">
+						  	<p name="service" id="service" class="form-control-static" ng-bind="detailsVm.selectedEntity.svcName"></p>
+						  </div>
+						</div>						  
+					  </div>
+					</div>
+					<div class="panel panel-default" style="border-left:0; border-right:0; border-radius:0">
+					  <div class="panel-heading">
+					    <h3 class="panel-title clearifx" style="display: inline-block">UI</h3>
+						<div class="pull-right">[Generation {{detailsVm.selectedEntity.uiGenEnabled?'Enabled':'Disabled'}}]</div>
+					  </div>
+					  <div class="panel-body">
+						<div class="form-group" ng-if="detailsVm.filterConfigurationEntries(detailsVm.searchText, 'Page Title')">
+						  <label for="ui-title" class="col-sm-3 control-label" required="true">Page Title</label>
+						  <div class="col-sm-5">
+						  	<p name="ui-title" id="ui-title" class="form-control-static" ng-bind="detailsVm.selectedEntity.uiTitle"></p>
+						  </div>
+						</div>						  
+					  </div>
+					</div>
+				</form>		
+			</div>
+		</div>
+	</div>
+</div>
